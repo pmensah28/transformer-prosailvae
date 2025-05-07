@@ -17,14 +17,14 @@ Transformer-VAE combines the power of transformer architecture with physics-base
 ## Architecture
 
 <p align="center">
-<img src="assets/architecture/training.png" width="80%" />
+<img src="tvae/assets/architecture/training.png" width="80%" />
 <br>
 <em>Figure 1: Transformer-PROSAILVAE training architecture. The transformer encoder maps spectral reflectance to a latent space while the PROSAIL model serves as a fixed physics-based decoder.</em>
 </p>
 
 
 <p align="center">
-<img src="assets/architecture/inference.png" width="80%" />
+<img src="tvae/assets/architecture/inference.png" width="80%" />
 <br>
 <em>Figure 2: Transformer-PROSAILVAE inference architecture. During inference, the model takes Sentinel-2 spectral reflectance as input and generates predictions of biophysical parameters (LAI, CCC) with associated uncertainty estimates.</em>
 </p>
@@ -162,7 +162,7 @@ The validation process evaluates the model against ground truth measurements fro
 ## Results
 
 <p align="center">
-<img src="assets/plots/combined_lai_validation_20250427_202455.png" width="48%" /> <img src="assets/plots/combined_ccc_validation_20250427_202455.png" width="48%" />
+<img src="tvae/assets/plots/combined_lai_validation_20250427_202455.png" width="48%" /> <img src="tvae/assets/plots/combined_ccc_validation_20250427_202455.png" width="48%" />
 <br>
 <em>Figure 3: Validation results showing model performance across different field sites. Left: Leaf Area Index (LAI) prediction accuracy. Right: Canopy Chlorophyll Content (CCC) prediction accuracy.</em>
 </p>
