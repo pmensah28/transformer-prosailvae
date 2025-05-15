@@ -1,10 +1,29 @@
+"""
+Spectral indices calculation module for both Sentinel-2 and EnMAP data.
+credit: yoel zerah
+"""
+
 import torch
 import numpy as np
 
 
 def NDVI(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
-    B4 = s2_r.select(bands_dim, 2).unsqueeze(bands_dim)
-    B8 = s2_r.select(bands_dim, 6).unsqueeze(bands_dim)
+    """
+    Calculate Normalized Difference Vegetation Index (NDVI).
+    
+    NDVI = (NIR - Red) / (NIR + Red)
+    Uses Sentinel-2 bands: B8 (NIR) and B4 (Red)
+    
+    Args:
+        s2_r (torch.Tensor): Sentinel-2 reflectance values
+        eps (torch.Tensor): Small value to prevent division by zero
+        bands_dim (int): Dimension containing spectral bands
+        
+    Returns:
+        torch.Tensor: NDVI values in range [-1, 1]
+    """
+    B4 = s2_r.select(bands_dim, 2).unsqueeze(bands_dim)  # Red
+    B8 = s2_r.select(bands_dim, 6).unsqueeze(bands_dim)  # NIR
     num = B8 - B4
     denom = B8 + B4
     non_zero_denom_idx = denom.abs() > eps
@@ -14,9 +33,23 @@ def NDVI(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
 
 
 def mNDVI750(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
-    B2 = s2_r.select(bands_dim, 0).unsqueeze(bands_dim)
-    B5 = s2_r.select(bands_dim, 3).unsqueeze(bands_dim)
-    B6 = s2_r.select(bands_dim, 4).unsqueeze(bands_dim)
+    """
+    Calculate modified NDVI using 750nm region.
+    
+    mNDVI750 = (B6 - B5) / (B6 + B5 - 2*B2)
+    Uses Sentinel-2 bands: B6, B5, and B2
+    
+    Args:
+        s2_r (torch.Tensor): Sentinel-2 reflectance values
+        eps (torch.Tensor): Small value to prevent division by zero
+        bands_dim (int): Dimension containing spectral bands
+        
+    Returns:
+        torch.Tensor: mNDVI750 values in range [-1, 1]
+    """
+    B2 = s2_r.select(bands_dim, 0).unsqueeze(bands_dim)  # Blue
+    B5 = s2_r.select(bands_dim, 3).unsqueeze(bands_dim)  # Red edge
+    B6 = s2_r.select(bands_dim, 4).unsqueeze(bands_dim)  # Red edge
     denom = B6 + B5 - 2 * B2
     num = B6 - B5
     mndvi750 = -torch.ones_like(B6)
@@ -26,19 +59,47 @@ def mNDVI750(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
 
 
 def CRI2(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
-    B2 = s2_r.select(bands_dim, 0).unsqueeze(bands_dim)
-    B5 = s2_r.select(bands_dim, 3).unsqueeze(bands_dim)
+    """
+    Calculate Carotenoid Reflectance Index 2 (CRI2).
+    
+    CRI2 = (1/B2) - (1/B5)
+    Uses Sentinel-2 bands: B2 (Blue) and B5 (Red edge)
+    
+    Args:
+        s2_r (torch.Tensor): Sentinel-2 reflectance values
+        eps (torch.Tensor): Small value to prevent division by zero
+        bands_dim (int): Dimension containing spectral bands
+        
+    Returns:
+        torch.Tensor: CRI2 values clamped at maximum of 20
+    """
+    B2 = s2_r.select(bands_dim, 0).unsqueeze(bands_dim)  # Blue
+    B5 = s2_r.select(bands_dim, 3).unsqueeze(bands_dim)  # Red edge
     cri2 = torch.zeros_like(B2)
     b2_and_b5_sup_0_idx = torch.logical_and(B2 > eps, B5 >= B2)
-    cri2[b2_and_b5_sup_0_idx] = 1 / (B2[b2_and_b5_sup_0_idx]) - 1 / ( 
+    cri2[b2_and_b5_sup_0_idx] = 1 / (B2[b2_and_b5_sup_0_idx]) - 1 / (
         B5[b2_and_b5_sup_0_idx]
     )
     return torch.clamp(cri2, max=20)
 
 
 def NDII(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
-    B8 = s2_r.select(bands_dim, 6).unsqueeze(bands_dim)
-    B11 = s2_r.select(bands_dim, 8).unsqueeze(bands_dim)
+    """
+    Calculate Normalized Difference Infrared Index (NDII).
+    
+    NDII = (NIR - SWIR1) / (NIR + SWIR1)
+    Uses Sentinel-2 bands: B8 (NIR) and B11 (SWIR1)
+    
+    Args:
+        s2_r (torch.Tensor): Sentinel-2 reflectance values
+        eps (torch.Tensor): Small value to prevent division by zero
+        bands_dim (int): Dimension containing spectral bands
+        
+    Returns:
+        torch.Tensor: NDII values in range [-1, 1]
+    """
+    B8 = s2_r.select(bands_dim, 6).unsqueeze(bands_dim)  # NIR
+    B11 = s2_r.select(bands_dim, 8).unsqueeze(bands_dim)  # SWIR1
     num = B8 - B11
     denom = B8 + B11
     non_zero_denom_idx = denom.abs() > eps
@@ -48,8 +109,22 @@ def NDII(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
 
 
 def ND_lma(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
-    B11 = s2_r.select(bands_dim, 8).unsqueeze(bands_dim)
-    B12 = s2_r.select(bands_dim, 9).unsqueeze(bands_dim)
+    """
+    Calculate Normalized Difference Leaf Mass Area Index (ND_lma).
+    
+    ND_lma = (SWIR2 - SWIR1) / (SWIR2 + SWIR1)
+    Uses Sentinel-2 bands: B12 (SWIR2) and B11 (SWIR1)
+    
+    Args:
+        s2_r (torch.Tensor): Sentinel-2 reflectance values
+        eps (torch.Tensor): Small value to prevent division by zero
+        bands_dim (int): Dimension containing spectral bands
+        
+    Returns:
+        torch.Tensor: ND_lma values in range [-1, 1]
+    """
+    B11 = s2_r.select(bands_dim, 8).unsqueeze(bands_dim)  # SWIR1
+    B12 = s2_r.select(bands_dim, 9).unsqueeze(bands_dim)  # SWIR2
     num = B12 - B11
     denom = B12 + B11
     non_zero_denom_idx = denom.abs() > eps
@@ -59,8 +134,22 @@ def ND_lma(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
 
 
 def LAI_savi(s2_r, eps=torch.tensor(1e-7), bands_dim=1):
-    B4 = s2_r.select(bands_dim, 2).unsqueeze(bands_dim)
-    B8 = s2_r.select(bands_dim, 6).unsqueeze(bands_dim)
+    """
+    Calculate Leaf Area Index using Soil Adjusted Vegetation Index (LAI_savi).
+    
+    LAI_savi = -log(abs(0.371 + 1.5 * (NIR - Red) / (NIR + Red + 0.5)) + eps) / 2.4
+    Uses Sentinel-2 bands: B8 (NIR) and B4 (Red)
+    
+    Args:
+        s2_r (torch.Tensor): Sentinel-2 reflectance values
+        eps (torch.Tensor): Small value to prevent division by zero
+        bands_dim (int): Dimension containing spectral bands
+        
+    Returns:
+        torch.Tensor: LAI_savi values
+    """
+    B4 = s2_r.select(bands_dim, 2).unsqueeze(bands_dim)  # Red
+    B8 = s2_r.select(bands_dim, 6).unsqueeze(bands_dim)  # NIR
     return -torch.log(
         torch.abs(
             torch.tensor(0.371)
@@ -79,6 +168,18 @@ INDEX_DICT = {
 
 
 def get_spectral_idx(s2_r, eps=torch.tensor(1e-4), bands_dim=1, index_dict=INDEX_DICT):
+    """
+    Calculate spectral indices for Sentinel-2 data.
+    
+    Args:
+        s2_r (torch.Tensor): Sentinel-2 reflectance values
+        eps (torch.Tensor): Small value to prevent division by zero
+        bands_dim (int): Dimension containing spectral bands
+        index_dict (dict): Dictionary of index functions
+        
+    Returns:
+        torch.Tensor: Concatenated spectral indices
+    """
     spectral_idx = []
     for idx_name, idx_fn in index_dict.items():
         idx = idx_fn(torch.clamp(s2_r, min=0.0, max=1.0), eps=eps, bands_dim=bands_dim)
