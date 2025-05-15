@@ -1,0 +1,138 @@
+[project]
+authors = [{name = "Prince Mensah", email = "pmensah@aimsammi.org"}]
+description = "Physics informed transformer-VAE with prosail as a decoder for biophysical parameter estimation"
+name = "prosailvae"
+requires-python = ">= 3.11"
+version = "0.1.0"
+dependencies = ["hydra-optuna-sweeper>=1.2.0,<2", "sensorsio @ git+https://src.koda.cnrs.fr/mmdc/sensorsio.git", "torchutils @ git+https://src.koda.cnrs.fr/mmdc/torchutils.git", "mmdc-singledate @ git+https://src.koda.cnrs.fr/mmdc/mmdc-singledate.git", "prosail @ git+https://src.koda.cnrs.fr/mmdc/prosailpython.git"]
+
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.pixi.project]
+channels = ["nvidia/label/cuda-11.8.0", "nvidia", "pytorch", "conda-forge"]
+platforms = ["linux-64"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[dependency-groups]
+dev = ["perflint>=0.8.1,<0.9", "auto-walrus>=0.3.4,<0.4"]
+
+[tool.pixi.dependencies]
+python = ">=3.11"
+cuda = {version = "*", channel="nvidia/label/cuda-11.8.0"}
+pytorch = {channel = "pytorch", version = "*"}
+torchvision = {channel = "pytorch", version = ">=0.19.1"}
+pytorch-cuda = {version = "11.8.*", channel="pytorch"}
+codecarbon = ">=2.2.2,<3"
+einops = ">=0.8.1,<0.9"
+geopandas = ">=0.14.4,<0.15"
+hydra-colorlog = ">=1.2.0,<2"
+hydra-core = ">=1.3.2,<2"
+jax = ">=0.4.24,<0.5"
+lightning-utilities = "==0.9.0"
+matplotlib = ">=3.9.1,<4"
+memory_profiler = ">=0.61.0,<0.62"
+numpy = ">=1.26.4,<2"
+numpyro = ">=0.17.0,<0.18"
+omegaconf = ">=2.3.0,<3"
+pandas = ">=2.2.3,<3"
+psutil = ">=7.0.0,<8"
+python-dotenv = ">=1.0.1,<2"
+pytorch-lightning = "==2.0.6"
+rasterio = ">=1.3.6,<2"
+rich = ">=13.9.4,<14"
+scikit-learn = ">=1.6.1,<2"
+seaborn = ">=0.13.2,<0.14"
+tqdm = ">=4.67.1,<5"
+zenodo_get = ">=1.6.1,<2"
+openpyxl = ">=3.1.5,<4"
+
+[tool.pixi.pypi-dependencies]
+prosailvae = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+
+[tool.pixi.feature.dev.dependencies]
+black = "*"
+flake8 = "*"
+ipykernel = "*"
+ipython = "*"
+isort = "*"
+mypy = "*"
+pre-commit = ">=4.1.0,<5"
+pudb = "*"
+pylint = "*"
+pylsp-mypy = "*"
+pytest = "*"
+python-lsp-server = "*"
+pyupgrade = "*"
+refurb = "*"
+ruff = "*"
+sh = "*"
+tensorboard = "*"
+pytest-cov = ">=6.0.0,<7"
+typeguard = ">=4.4.2,<5"
+
+[tool.pixi.environments]
+dev = { features = ["dev"], solve-group = "default" }
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.lint]
+ignore = ["F722"]
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+force-single-line = false
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 88
+
+[tool.pycodestyle]
+max-line-length = 88
+
+[tool.flake8]
+ignore = ["F722", "E501", "W503"]
+extend-ignore = ["F722", "E501"]
+max_line-length = 88
+
+[tool.pytest.ini_options]
+addopts = "--cov --typeguard-packages=prosailvae"
+log_cli = true
+log_cli_level = "INFO"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "largedata: marks tests that need large datasets (deselect with '-m \"not largedata\"')",
+]
+
+
+[tool.isort]
+profile = "black"
+line_length = 75
+
+[tool.pylint."MESSAGES CONTROL"]
+good-names = [
+    "x",
+    "y",
+    "W",
+    "H",
+    "T",
+    "C"
+]
+
+[tool.coverage.run]
+source = [
+    "tvae/",
+    "dataset/",
+    "utils/",
+    "metrics/",
+    "validation/",
+    "tests/"
+    ]
+
+[tool.coverage.report]
+show_missing = true
