@@ -1,0 +1,16 @@
+=== LAI Validation Metrics Summary ===
+
+Overall RMSE: 0.9920
+Overall PICP: 0.9497
+Overall MPIW: 5.1455
+
+--- By Campaign ---
+
+=== CCC Validation Metrics Summary ===
+
+Overall RMSE: 76.5640
+Overall PICP: 0.8843
+Overall MPIW: 310.5517
+
+--- By Campaign ---
+

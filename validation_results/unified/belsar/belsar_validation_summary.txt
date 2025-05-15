@@ -1,0 +1,23 @@
+=== Transformer-VAE BelSAR Validation Results ===
+
+Model: 1
+Mode: sim_tg_mean
+
+All LAI Validation:
+  Samples: 50
+  MAE: 0.7515
+  RMSE: 1.0311
+  R²: 0.5918
+
+Wheat LAI Validation:
+  Samples: 20
+  MAE: 0.7594
+  RMSE: 1.0139
+  R²: -1.7274
+
+Maize LAI Validation:
+  Samples: 30
+  MAE: 0.7463
+  RMSE: 1.0423
+  R²: 0.2277
+
