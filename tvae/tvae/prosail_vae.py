@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
-Created on Tue Nov  8 14:45:12 2022
-
-Updated to support a transformer-based encoder.
+transformer-based encoder.
 """
 
 from dataclasses import dataclass, field
@@ -108,13 +106,13 @@ def load_params(config_dir, config_file, parser=None):
     if "prospect_version" not in params:
         params["prospect_version"] = "5"
     if "frm4veg_data_dir" not in params:
-        params["frm4veg_data_dir"] = "/work/scratch/zerahy/prosailvae/data/frm4veg_validation"
+        params["frm4veg_data_dir"] = None
     if "frm4veg_2021_data_dir" not in params:
-        params["frm4veg_2021_data_dir"] = "/work/scratch/zerahy/prosailvae/data/frm4veg_2021_validation"
+        params["frm4veg_2021_data_dir"] = None
     if "belsar_dir" not in params:
-        params["belsar_dir"] = "/work/scratch/zerahy/prosailvae/data/belSAR_validation"
+        params["belsar_dir"] = None
     if "cyclical_data_dir" not in params:
-        params["cyclical_data_dir"] = "/work/scratch/zerahy/prosailvae/data/projected_data"
+        params["cyclical_data_dir"] = "projected_data"
 
     # === Defaults for Transformer-based encoders ===
     # Only relevant if encoder_type = "transformer"
