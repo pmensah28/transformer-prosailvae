@@ -1,0 +1,23 @@
+/__pycache__/*
+*/__pycache__/*
+*/*.csv
+data/*.csv
+data/*/*.pth
+data/*/*.csv
+data/*/*.pth
+results/*
+tvae.egg/*
+tvae.egg-info/*
+config/transformer_config.json
+*/*.gpkg
+*.gpkg
+field_data/*/.gpkg
+data/validation/*
+__pycache__/
+/.coverage
+*~
+/.mypy_cache/
+
+# pixi environments
+.pixi
+*.egg-info
